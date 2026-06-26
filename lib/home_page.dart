@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'AddTransaction_page.dart'; // Import the AddTransactionPage
+// Note: Make sure AddTransactionPage is imported or in the same file so the Navigator can find it.
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A365D), // Matches your dark blue background
+      backgroundColor: const Color(0xFF1A365D), // Dark blue background
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A365D),
         elevation: 0,
@@ -78,7 +81,17 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildActionButton(Icons.add, 'Add Exp'),
+                    // HERE IS THE LINKED BUTTON
+                    _buildActionButton(
+                      Icons.add, 
+                      'Add Exp',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AddTransactionPage()),
+                        );
+                      },
+                    ),
                     _buildActionButton(Icons.analytics_outlined, 'Analytics'),
                     _buildActionButton(Icons.account_balance, 'Banks'),
                     _buildActionButton(Icons.more_horiz, 'More'),
@@ -114,6 +127,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  // Helper builder method for stats inside the Hero Card
   Widget _buildBalanceStat(String label, String amount, IconData icon) {
     return Row(
       children: [
@@ -137,32 +151,37 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label) {
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+  // UPDATED: Helper builder method for Quick Actions (Now supports tapping)
+  Widget _buildActionButton(IconData icon, String label, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: const Color(0xFF1E88E5), size: 24),
           ),
-          child: Icon(icon, color: const Color(0xFF1E88E5), size: 24),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white70), // Changed to white70
-        ),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white70),
+          ),
+        ],
+      ),
     );
   }
 
+  // Helper builder method for Transaction Rows
   Widget _buildTransactionItem(String title, String category, String amount, Color amountColor, IconData icon) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08), // Slightly translucent white for dark mode cards
+        color: Colors.white.withOpacity(0.08),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
