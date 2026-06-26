@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddTransactionPage extends StatefulWidget {
   const AddTransactionPage({super.key});
@@ -8,26 +9,63 @@ class AddTransactionPage extends StatefulWidget {
 }
 
 class _AddTransactionPageState extends State<AddTransactionPage> {
-  // State variables to track user input
-  bool isIncome = false; // Defaults to Expense
+  bool isIncome = false; 
   String selectedCategory = 'Food'; 
+  
+  // NEW: Controllers to grab text input
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
-  // Lists defined directly from your documentation
   final List<String> expenseCategories = [
-    'Food', 'Transport', 'Shopping', 'Bills', 
-    'Education', 'Entertainment', 'Healthcare', 'Other'
+    'Food', 'Transport', 'Shopping', 'Bills', 'Education', 'Entertainment', 'Healthcare', 'Other'
   ];
   
   final List<String> incomeCategories = [
     'Salary', 'Freelancing', 'Business', 'Investment', 'Gift', 'Other'
   ];
 
+  // NEW: The function that talks to Firebase
+  Future<void> saveTransaction() async {
+    if (amountController.text.isEmpty || descriptionController.text.isEmpty) {
+      // Don't save if fields are empty
+      return; 
+    }
+
+    try {
+      // Parse the amount string to a double
+      double amount = double.parse(amountController.text);
+
+      // Create a map of the data to send to Firestore
+      Map<String, dynamic> transactionData = {
+        'amount': amount,
+        'category': selectedCategory,
+        'description': descriptionController.text,
+        'isIncome': isIncome,
+        'date': Timestamp.now(), // Firebase uses Timestamp instead of DateTime
+      };
+
+      // Push to the 'transactions' collection in Firestore
+      await FirebaseFirestore.instance.collection('transactions').add(transactionData);
+
+      // If successful, close the page and go back to Dashboard
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print("Error saving transaction: $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    amountController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Dynamically choose the category list based on the toggle
     List<String> currentCategories = isIncome ? incomeCategories : expenseCategories;
-
-    // Ensure the selected category exists in the current list when switching
     if (!currentCategories.contains(selectedCategory)) {
       selectedCategory = currentCategories.first;
     }
@@ -38,10 +76,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          'Add Transaction',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+        title: const Text('Add Transaction', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -49,142 +84,56 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // 1. Income / Expense Toggle
-              Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => isIncome = false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: !isIncome ? Colors.redAccent : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Expense',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => isIncome = true),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: isIncome ? Colors.greenAccent.shade700 : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Income',
-                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // ... [Keep your Income/Expense Toggle UI exactly the same here] ...
+              
               const SizedBox(height: 32),
-
-              // 2. Amount Input
               const Text('Amount', style: TextStyle(color: Colors.white70, fontSize: 14)),
               const SizedBox(height: 8),
+              
+              // UPDATED: Attach the amountController
               TextField(
-                keyboardType: TextInputType.number,
+                controller: amountController,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 style: const TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
                 decoration: InputDecoration(
                   prefixText: '\$ ',
                   prefixStyle: const TextStyle(color: Colors.white70, fontSize: 32),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 24),
 
-              // 3. Category Dropdown
-              const Text('Category', style: TextStyle(color: Colors.white70, fontSize: 14)),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: selectedCategory,
-                    dropdownColor: const Color(0xFF1A365D),
-                    icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white70),
-                    isExpanded: true,
-                    style: const TextStyle(color: Colors.white, fontSize: 16),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedCategory = newValue!;
-                      });
-                    },
-                    items: currentCategories.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+              // ... [Keep your Category Dropdown UI exactly the same here] ...
+              
               const SizedBox(height: 24),
-
-              // 4. Description Input
               const Text('Description', style: TextStyle(color: Colors.white70, fontSize: 14)),
               const SizedBox(height: 8),
+              
+              // UPDATED: Attach the descriptionController
               TextField(
+                controller: descriptionController,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'e.g., Grocery at Walmart',
                   hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
                   filled: true,
                   fillColor: Colors.white.withOpacity(0.05),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 48),
 
-              // 5. Save Button
+              // UPDATED: Call the saveTransaction function
               ElevatedButton(
-                onPressed: () {
-                  // TODO: Save to database later
-                  Navigator.pop(context); // Returns to the Home Page
-                },
+                onPressed: saveTransaction, // Calls the Firebase write function
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF1E88E5),
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
-                child: const Text(
-                  'Save Transaction',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
+                child: const Text('Save Transaction', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
               ),
             ],
           ),

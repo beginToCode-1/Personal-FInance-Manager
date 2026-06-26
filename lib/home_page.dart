@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'TransactionHistory_page.dart';
 import 'AddTransaction_page.dart';
-
+import 'TransactionHistory_page.dart';
+import 'budget_page.dart';
+import 'savingsgoal_page.dart';
+import 'analytics_page.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -91,9 +93,39 @@ class HomePage extends StatelessWidget {
                         );
                       },
                     ),
-                    _buildActionButton(Icons.analytics_outlined, 'Analytics'),
-                    _buildActionButton(Icons.account_balance, 'Banks'),
-                    _buildActionButton(Icons.more_horiz, 'More'),
+                    
+                    // LINKED ANALYTICS BUTTON
+                    _buildActionButton(
+                      Icons.analytics_outlined, 
+                      'Analytics',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AnalyticsPage()),
+                        );
+                      },
+                    ),
+                    
+                    _buildActionButton(
+                      Icons.pie_chart_outline, 
+                      'Budgets',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const BudgetPage()),
+                        );
+                      },
+                    ),
+                    _buildActionButton(
+                      Icons.savings_outlined, 
+                      'Goals',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SavingsGoalsPage()),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -106,7 +138,6 @@ class HomePage extends StatelessWidget {
                       'Recent Transactions',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
-                    // HERE IS THE NEW LINKED BUTTON
                     TextButton(
                       onPressed: () {
                         Navigator.push(

@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'registration_page.dart';
 import 'home_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 
-
-void main() {
+void main() async {
+  // Ensure Flutter bindings are initialized before calling native code
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    // options: DefaultFirebaseOptions.currentPlatform, 
+  );
   runApp(const MyApp());
 }
 
