@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'registration_page.dart';
+import 'home_page.dart';
 
 
 void main() {
@@ -92,6 +93,23 @@ class StartupPage extends StatelessWidget {
             ),
             ),
             const SizedBox(height: 48),
+            ElevatedButton(
+                onPressed: () {
+                  // Replaces the current screen with the HomePage
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomePage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E88E5),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  elevation: 0,
+                ),
+                child: const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ),
 
             ElevatedButton(
               onPressed: () {
