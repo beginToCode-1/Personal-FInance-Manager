@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'AddTransaction_page.dart'; // Import the AddTransactionPage
-// Note: Make sure AddTransactionPage is imported or in the same file so the Navigator can find it.
+import 'TransactionHistory_page.dart';
+import 'AddTransaction_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,7 +8,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1A365D), // Dark blue background
+      backgroundColor: const Color(0xFF1A365D),
       appBar: AppBar(
         backgroundColor: const Color(0xFF1A365D),
         elevation: 0,
@@ -81,7 +81,6 @@ class HomePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // HERE IS THE LINKED BUTTON
                     _buildActionButton(
                       Icons.add, 
                       'Add Exp',
@@ -107,8 +106,14 @@ class HomePage extends StatelessWidget {
                       'Recent Transactions',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                     ),
+                    // HERE IS THE NEW LINKED BUTTON
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const TransactionHistoryPage()),
+                        );
+                      },
                       child: const Text('See All', style: TextStyle(color: Colors.white70)),
                     ),
                   ],
@@ -127,7 +132,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Helper builder method for stats inside the Hero Card
   Widget _buildBalanceStat(String label, String amount, IconData icon) {
     return Row(
       children: [
@@ -151,7 +155,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // UPDATED: Helper builder method for Quick Actions (Now supports tapping)
   Widget _buildActionButton(IconData icon, String label, {VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
@@ -175,7 +178,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Helper builder method for Transaction Rows
   Widget _buildTransactionItem(String title, String category, String amount, Color amountColor, IconData icon) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
