@@ -1,10 +1,6 @@
 // TODO Implement this library.
 import 'package:flutter/material.dart';
-
-
-
-//Login Page
-class  LoginPage extends StatelessWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
@@ -12,14 +8,14 @@ class  LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Login'),
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        elevation: 0, 
+        backgroundColor: Colors.white,
+        elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black87),
-      ),      
+      ),
       body: SafeArea(
-        child: Padding (padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child : Column(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
@@ -51,7 +47,7 @@ class  LoginPage extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 28, 58, 113),
+                  backgroundColor: const Color(0xFF1E88E5),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -108,7 +108,7 @@ class StartupPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  side: const BorderSide(color: const Color.fromARGB(255, 28, 58, 113), width: 2),
+                  side: const BorderSide(color: Color.fromARGB(255, 28, 58, 113), width: 2),
                 ),
                 elevation: 0,
               ),
